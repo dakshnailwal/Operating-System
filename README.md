@@ -153,9 +153,11 @@ cd MultiThreadedProxyServerClient
 make all
 ./proxy <port_number>
 
+```
 
 Open the following URL in your browser:
 http://localhost:<port>/https://www.cs.princeton.edu/
+
 
 ## Notes
 
