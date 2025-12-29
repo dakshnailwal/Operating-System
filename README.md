@@ -1,122 +1,163 @@
-# Multi Threaded Proxy Server (With & Without Cache)
+# Multi-Threaded Proxy Server in C (With and Without Cache)
 
-A multi-threaded HTTP proxy server implemented in **C**, supporting both cached and non-cached request handling.  
-HTTP request parsing follows standard proxy server behavior.
+This project implements a **Multi-Threaded HTTP Proxy Server** using the C programming language.  
+The proxy server is capable of handling multiple client requests concurrently and can be executed **with cache** or **without cache**.
 
----
+When caching is enabled, the proxy uses an **LRU (Least Recently Used)** cache replacement algorithm to store and retrieve HTTP responses efficiently.
 
-## 📑 Index
-
-| Section |
-|--------|
-| Project Theory |
-| How to Run |
-| Demo |
-| Contributing |
+The project demonstrates practical usage of **Operating System concepts**, **network programming**, and **HTTP request parsing**.
 
 ---
 
-## 📘 Project Theory
+## Table of Contents
 
-### Introduction
-A proxy server acts as an intermediary between the client and the destination server.  
-It receives requests from the client, forwards them to the target server, and returns the server’s response back to the client.
+- Project Description
+- Working Flow
+- Multi-Threading Implementation
+- Motivation and Need
+- Proxy Server Capabilities
+- Operating System Concepts Used
+- Cache Design
+- Limitations
+- Possible Extensions
+- How to Run
+- Running Without Cache
+- Demo Behavior
+- Notes
 
 ---
 
-### Basic Working Flow
+## Project Description
+
+A proxy server acts as an intermediary between a client (web browser) and a remote web server.  
+In this implementation, the client sends its HTTP request to the proxy server instead of directly contacting the destination server.
+
+The proxy server:
+- Parses the HTTP request
+- Forwards the request to the target server
+- Receives the response
+- Sends the response back to the client
+
+If caching is enabled, the proxy stores server responses and serves repeated requests directly from the cache, reducing server load and response time.
+
+---
+
+## Working Flow
 
 | Step | Description |
 |-----|------------|
-| 1 | Client sends HTTP request to proxy |
-| 2 | Proxy parses the request |
-| 3 | Cache lookup (if enabled) |
-| 4 | Cache hit → return cached response |
-| 5 | Cache miss → forward request to server |
-| 6 | Receive response from server |
-| 7 | Send response to client and store in cache |
+| 1 | Client sends an HTTP request to the proxy |
+| 2 | Proxy parses the HTTP request |
+| 3 | Cache is checked (if enabled) |
+| 4 | Cache hit → response served from cache |
+| 5 | Cache miss → request forwarded to server |
+| 6 | Server sends response to proxy |
+| 7 | Proxy forwards response to client |
+| 8 | Response stored in cache (if enabled) |
 
 ---
 
-### Multi-Threading Implementation
+## Multi-Threading Implementation
 
-- Each client request is handled by a separate thread  
-- **Semaphores** are used instead of condition variables  
-- `pthread_join()` and `pthread_exit()` are avoided  
-- Synchronization is handled using:
-  - `sem_wait()`
-  - `sem_post()`
+- Each client connection is handled using a **separate thread**
+- Synchronization is achieved using **semaphores**
+- Condition variables and `pthread_join()` are not used
 
-**Why Semaphores?**
-- No need to track thread IDs
-- Simpler synchronization model for this use case
+### Reason for Using Semaphores
+
+| Method | Limitation |
+|------|------------|
+| pthread_join() | Requires tracking thread IDs |
+| Condition Variables | More complex synchronization |
+| Semaphores | No thread ID tracking, simpler control |
+
+Semaphores use `sem_wait()` and `sem_post()` to manage concurrent access to shared resources.
 
 ---
 
-### Motivation / Need of the Project
+## Motivation and Need
 
 This project helps in understanding:
 
-- Request flow from local machine to remote server
+- How HTTP requests travel from a client to a server
 - Handling multiple clients concurrently
-- Locking and synchronization mechanisms
-- Cache behavior similar to modern browsers
+- Locking and synchronization in multi-threaded programs
+- Cache implementation similar to browser behavior
+- Practical application of Operating System concepts
 
 ---
 
-### What a Proxy Server Can Do
+## Proxy Server Capabilities
 
 | Capability | Description |
-|-----------|------------|
-| Performance | Reduces server load and speeds up responses |
-| Caching | Stores responses for repeated requests |
-| Security | Hides client IP from destination server |
-| Control | Can restrict access to specific websites |
-| Extensibility | Can be modified to encrypt requests |
+|----------|-------------|
+| Request Forwarding | Forwards client requests to server |
+| Multi-Client Handling | Handles multiple clients simultaneously |
+| Caching | Stores server responses (optional) |
+| Traffic Reduction | Reduces repeated server requests |
+| Response Speed | Faster response on cache hits |
+| Access Control | Can be extended to restrict websites |
 
 ---
 
-### OS Concepts Used
+## Operating System Concepts Used
 
-| Component | Usage |
-|---------|-------|
-| Threads | Handle multiple clients |
-| Locks | Ensure data consistency |
-| Semaphores | Thread synchronization |
-| Cache | Implemented using LRU algorithm |
-
----
-
-### Cache Details
-
-- Cache implemented using a linked list
-- **LRU (Least Recently Used)** replacement policy
-- Fixed-size cache elements
+| OS Concept | Usage |
+|----------|-------|
+| Threads | Handle concurrent clients |
+| Semaphores | Synchronization |
+| Locks | Prevent race conditions |
+| Cache | Store HTTP responses |
+| LRU Algorithm | Cache eviction policy |
 
 ---
 
-### Limitations
+## Cache Design
 
-- Websites opening multiple connections may store responses separately
-- Cached response may be incomplete in such cases
-- Fixed cache size limits large websites
-- Not suitable for very large or dynamic content
-
----
-
-### Possible Extensions
-
-- Use multiprocessing instead of multithreading
-- Implement website filtering
-- Add support for HTTP POST requests
-- Improve cache handling for large responses
+- Cache is implemented using a **linked list**
+- Each cache entry contains:
+  - Requested URL
+  - Corresponding HTTP response
+- When cache is full, the **least recently used** entry is removed
 
 ---
 
-## ▶ How to Run
+## Limitations
+
+| Limitation | Explanation |
+|----------|-------------|
+| Multiple internal requests | Each response cached separately, may cause incomplete page load |
+| Fixed cache size | Large websites may not fit |
+| Request type | Only HTTP GET requests supported |
+| Chunked responses | Partial responses may be cached |
+
+---
+
+## Possible Extensions
+
+| Extension | Description |
+|---------|-------------|
+| Multi-processing | Replace threads with processes |
+| POST support | Handle HTTP POST requests |
+| Website filtering | Restrict access to specific domains |
+| Encryption | Encrypt client requests |
+| Dynamic cache | Variable cache size |
+
+---
+
+## How to Run
 
 ```bash
 git clone https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient.git
 cd MultiThreadedProxyServerClient
 make all
 ./proxy <port_number>
+
+
+Open the following in a browser:
+Open http://localhost:port/https://www.cs.princeton.edu/
+
+
+## *Note:*
+- This code can only be run in Linux Machine. Please disable your browser cache.
+- To run the proxy without cache Change the name of the file (proxy_server_with_cache.c to proxy_server_without_cache.c) MakeFile.
