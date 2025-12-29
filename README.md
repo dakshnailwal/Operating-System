@@ -1,4 +1,4 @@
-# Operating System Projects
+# Operating System
 
 This repository contains projects focused on implementing and understanding **core Operating System concepts** through practical, system-level programming.
 
