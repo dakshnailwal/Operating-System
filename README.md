@@ -148,16 +148,17 @@ This project helps in understanding:
 ## How to Run
 
 ```bash
-git clone https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient.git
-cd MultiThreadedProxyServerClient
+git clone https://github.com/dakshnailwal/Operating-System.git
+cd Operating-System/Multithreaded\ Proxy\ Web-Server
 make all
 ./proxy <port_number>
 
 ```
 
 Open the following URL in your browser:
+```bash
 http://localhost:<port>/https://www.cs.princeton.edu/
-
+```
 
 ## Notes
 
