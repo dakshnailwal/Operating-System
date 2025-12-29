@@ -153,11 +153,3 @@ cd MultiThreadedProxyServerClient
 make all
 ./proxy <port_number>
 
-
-Open the following in a browser:
-Open http://localhost:port/https://www.cs.princeton.edu/
-
-
-## *Note:*
-- This code can only be run in Linux Machine. Please disable your browser cache.
-- To run the proxy without cache Change the name of the file (proxy_server_with_cache.c to proxy_server_without_cache.c) MakeFile.
